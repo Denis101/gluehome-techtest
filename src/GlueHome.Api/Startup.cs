@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using GlueHome.Api.Mysql;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -50,6 +51,8 @@ namespace GlueHome.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddSingleton<IMysqlDataClient>(new MysqlDataClient());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
