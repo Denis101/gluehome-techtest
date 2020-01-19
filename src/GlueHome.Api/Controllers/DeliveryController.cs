@@ -25,6 +25,7 @@ namespace GlueHome.Api.Controllers
         }
 
         [HttpGet]
+        [Route("{id}")]
         public Delivery Get([FromRoute] long id)
         {
             return deliveryReader.Get(id);

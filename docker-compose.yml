@@ -17,7 +17,7 @@ services:
       - 5000:5000
       - 5001:5001
     environment:
-      MYSQL_CONNECTION_STRING: mysql:3306
+      MYSQL_CONNECTION_STRING: Server=mysql;User ID=api;Password=api;Database=logistics
     links:
       - mysql
     networks:
