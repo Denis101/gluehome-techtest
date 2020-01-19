@@ -20,6 +20,7 @@ namespace GlueHome.Api
     public class Startup
     {
         public IConfiguration Configuration { get; }
+        public EnvironmentSettings EnvironmentSettings { get; private set; }
         
         public Startup(IConfiguration configuration)
         {
@@ -30,6 +31,8 @@ namespace GlueHome.Api
                     .WriteTo.Console(new JsonFormatter())
                     .Enrich.FromLogContext()
                     .CreateLogger();
+
+            this.EnvironmentSettings = new EnvironmentSettings(configuration);
         }
 
         public bool ShouldExcludeFromLog(LogEvent le)
@@ -56,7 +59,10 @@ namespace GlueHome.Api
         {
             services.AddControllers();
 
-            services.AddSingleton<IMysqlContext>(new MysqlContext());
+            services.AddSingleton<IMysqlContext>(
+                c => new MysqlContext(
+                    c.GetService<ILogger<MysqlContext>>(), 
+                    EnvironmentSettings.MysqlConnectionString));
 
             services.AddScoped<IRepository<Auth>, AuthRepository>();
             services.AddScoped<IRepository<Member>, MemberRepository>();

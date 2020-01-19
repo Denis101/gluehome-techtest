@@ -10,8 +10,8 @@ namespace GlueHome.Api.Mysql
         private readonly ILogger<MysqlContext> logger;
         private readonly MySqlConnection connection;
 
-        public MysqlContext(ILogger<MysqlContext> logger) {
-            connection = new MySqlConnection("CONNECTION_STRING_YO");
+        public MysqlContext(ILogger<MysqlContext> logger, string connectionString) {
+            connection = new MySqlConnection(connectionString);
             connection.Open();
         }
 
