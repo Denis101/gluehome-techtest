@@ -20,3 +20,4 @@
 - Using nginx as a reverse proxy. With more time, I would likely terminate TLS here. I could also decide to terminate at a load balancer upstream depending on how concerned about security I might be. There are cases where we might even want over-the-wire encryption internally in our network.
 - No transactional queries when running queries in quick succession. Would like to figure out a way to implement that.
 - We're storing PII without asking for opt-in nor notifying customers, very naughty. GDPR no-no.
+- Some sort of CI pipeline, that will create the build artifacts, run unit & integration tests, build docker containers and then deploy to an environment. I'm just using docker-compose here, but it could effectively be any container orchestration platform (e.g. apply k8s manifests)
