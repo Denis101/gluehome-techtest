@@ -2,20 +2,30 @@ using System.Collections.Generic;
 using GlueHome.Api.Extensions;
 using GlueHome.Api.Models.Table;
 using GlueHome.Api.Mysql;
+using Microsoft.Extensions.Logging;
 
 namespace GlueHome.Api.Repositories
 {
-    public class OrderRepository
+    public class OrderRepository : IRepository<Order>
     {
-        private static readonly OrderMapper mapper = new OrderMapper();
-        private readonly IMysqlDataClient _mysqlDataClient;
+        public IDataMapper<Order> Mapper => new OrderMapper();
+        private readonly ILogger<OrderRepository> logger;
+        private readonly IMysqlContext mysqlContext;
+
+        public OrderRepository(
+            ILogger<OrderRepository> logger,
+            IMysqlContext mysqlContext)
+        {
+            this.logger = logger;
+            this.mysqlContext = mysqlContext;
+        }
 
         public Order FindOne(long id)
         {
-            return _mysqlDataClient.ExecuteQuery(
+            return mysqlContext.ExecuteQuery(
                 "SELECT * FROM logistics.tb_order WHERE order_id = @id",
                 new Dictionary<string, dynamic>() { { "@id", id } },
-                mapper);
+                Mapper);
         }
 
         public Order Update(Order order)
@@ -40,7 +50,7 @@ namespace GlueHome.Api.Repositories
                 { "@delivery_end_date", order.DeliveryEndDate.ToUnixTimestamp() }
             };
 
-            _mysqlDataClient.ExecuteQuery(query, parameters, mapper);
+            mysqlContext.ExecuteQuery(query, parameters, Mapper);
             return FindOne(order.OrderId);
         }
 
@@ -70,7 +80,7 @@ namespace GlueHome.Api.Repositories
                 { "@delivery_end_date", order.DeliveryEndDate.ToUnixTimestamp() }
             };
 
-            _mysqlDataClient.ExecuteQuery(query, parameters, mapper);
+            mysqlContext.ExecuteQuery(query, parameters, Mapper);
             return FindOne(order.OrderId);
         }
     }

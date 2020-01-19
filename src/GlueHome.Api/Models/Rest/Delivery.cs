@@ -1,6 +1,6 @@
-namespace GlueHome.Api.Models
+namespace GlueHome.Api.Models.Rest
 {
-    public class Delivery 
+    public class Delivery
     {
         public DeliveryState State { get; set; }
         public DateTimeWindow AccessWindow { get; set; }

@@ -3,7 +3,7 @@ using Xunit;
 
 namespace GlueHome.Api.IntegrationTest
 {
-    public class BaseFixture : IClassFixture<DockerWebApplicationFactory>
+    public abstract class BaseFixture : IClassFixture<DockerWebApplicationFactory>
     {
         
     }

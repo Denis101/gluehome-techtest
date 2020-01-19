@@ -1,26 +1,28 @@
 using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 
 namespace GlueHome.Api.Mysql
 {
-    public class MysqlDataClient : IMysqlDataClient, IDisposable
+    public class MysqlContext : IMysqlContext, IDisposable
   {
-    private readonly MySqlConnection _connection;
+    private readonly ILogger<MysqlContext> logger;
+    private readonly MySqlConnection connection;
 
-    public MysqlDataClient() {
-      _connection = new MySqlConnection("CONNECTION_STRING_YO");
-      _connection.Open();
+    public MysqlContext(ILogger<MysqlContext> logger) {
+      connection = new MySqlConnection("CONNECTION_STRING_YO");
+      connection.Open();
     }
 
     public T ExecuteQuery<T>(string query, IDataMapper<T> mapper)
     {
-      return ExecuteCommand(new MySqlCommand(query, _connection), mapper);
+      return ExecuteCommand(new MySqlCommand(query, connection), mapper);
     }
 
     public T ExecuteQuery<T>(string query, Dictionary<string, dynamic> parameters, IDataMapper<T> mapper)
     {
-      var cmd = new MySqlCommand(query, _connection);
+      var cmd = new MySqlCommand(query, connection);
       foreach (KeyValuePair<string, dynamic> kv in parameters) {
         cmd.Parameters.AddWithValue(kv.Key, kv.Value);
       }
@@ -38,7 +40,7 @@ namespace GlueHome.Api.Mysql
 
     public void Dispose()
     {
-      _connection.Close();
+      connection.Close();
     }
   }
 }

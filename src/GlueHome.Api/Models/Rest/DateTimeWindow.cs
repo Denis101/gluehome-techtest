@@ -1,6 +1,6 @@
 using System;
 
-namespace GlueHome.Api.Models
+namespace GlueHome.Api.Models.Rest
 {
     public class DateTimeWindow 
     {

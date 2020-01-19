@@ -1,6 +1,10 @@
 using System;
 using System.Linq;
+using GlueHome.Api.Authentication;
+using GlueHome.Api.Models.Table;
 using GlueHome.Api.Mysql;
+using GlueHome.Api.Repositories;
+using GlueHome.Api.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -52,7 +56,15 @@ namespace GlueHome.Api
         {
             services.AddControllers();
 
-            services.AddSingleton<IMysqlDataClient>(new MysqlDataClient());
+            services.AddSingleton<IMysqlContext>(new MysqlContext());
+
+            services.AddScoped<IRepository<Auth>, AuthRepository>();
+            services.AddScoped<IRepository<Member>, MemberRepository>();
+            services.AddScoped<IRepository<Order>, OrderRepository>();
+
+            services.AddTransient<IAuthenticator, AuthService>();
+            services.AddTransient<IDeliveryReader, DeliveryService>();
+            services.AddTransient<IDeliveryWriter, DeliveryService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

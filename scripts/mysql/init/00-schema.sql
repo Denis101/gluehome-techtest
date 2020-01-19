@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS `tb_member` (
   `address_line_1` varchar(255) DEFAULT NULL,
   `address_line_2` varchar(255) DEFAULT NULL,
   `address_line_3` varchar(255) DEFAULT NULL,
-  `postcode` varchar(255) DEFAULT NULL,
+  `postcode` varchar(8) DEFAULT NULL,
   `is_partner` tinyint(4) DEFAULT 0,
   `create_date` int(10) unsigned DEFAULT NULL COMMENT 'unixtime',
   `modified_date` int(10) unsigned DEFAULT NULL COMMENT 'unixtime',

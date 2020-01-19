@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using GlueHome.Api.Models;
+using GlueHome.Api.Models.Rest;
 using GlueHome.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -10,36 +10,42 @@ namespace GlueHome.Api.Controllers
     [Route("api/delivery")]
     public class DeliveryController : ControllerBase
     {
-        private readonly DeliveryService _deliveryService;
-        private readonly ILogger<DeliveryController> _logger;
+        private readonly ILogger<DeliveryController> logger;
+        private readonly IDeliveryReader deliveryReader;
+        private readonly IDeliveryWriter deliveryWriter;
 
-        public DeliveryController(ILogger<DeliveryController> logger)
+        public DeliveryController(
+            ILogger<DeliveryController> logger,
+            IDeliveryReader deliveryReader, 
+            IDeliveryWriter deliveryWriter)
         {
-            _logger = logger;
+            this.logger = logger;
+            this.deliveryReader = deliveryReader;
+            this.deliveryWriter = deliveryWriter;
         }
 
         [HttpGet]
         public Delivery Get([FromRoute] long id)
         {
-            return _deliveryService.Get(id);
+            return deliveryReader.Get(id);
         }
 
         [HttpGet]
         public IEnumerable<Delivery> List() 
         {
-            return _deliveryService.List();
+            return deliveryReader.List();
         }
 
         [HttpPost]
         public Delivery Create([FromBody] Delivery delivery)
         {
-            return _deliveryService.Create(delivery);
+            return deliveryWriter.Create(delivery);
         }
 
         [HttpPut]
         public Delivery Update([FromRoute] long id, [FromBody] Delivery delivery)
         {
-            return _deliveryService.Update(delivery);
+            return deliveryWriter.Update(delivery);
         }
     }
 }

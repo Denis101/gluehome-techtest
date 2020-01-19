@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using GlueHome.Api.Models;
+using GlueHome.Api.Models.Rest;
 
 namespace GlueHome.Api.Services
 {

@@ -1,10 +1,18 @@
 using System;
-using GlueHome.Api.Models;
+using GlueHome.Api.Models.Rest;
+using Microsoft.Extensions.Logging;
 
 namespace GlueHome.Api.Processors
 {
     public class DeliveryStateProcessor : IDeliveryStateProcessor
     {
+        private readonly ILogger<DeliveryStateProcessor> logger;
+
+        public DeliveryStateProcessor(ILogger<DeliveryStateProcessor> logger)
+        {
+            this.logger = logger;
+        }
+
         public DeliveryState Approve(Delivery delivery)
         {
             if (DateTime.Now < delivery.AccessWindow.StartTime) {
