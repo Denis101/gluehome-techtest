@@ -19,6 +19,14 @@ API is accessible at `localhost:8080`, you can navigate the available resources 
 
 `dotnet test`
 
+## Usage
+
+Authentication uses the Basic `Authorization` HTTP header, `<username>:<password>` as base64 encoded text.
+
+Example request:
+```curl -H "Authorization: $(echo -n 'user@gluehome.com:test' | openssl base64 | awk '{ print "Basic "$1 }')" http://localhost:8080/api/delivery```
+
+
 ## Additional considerations/assumptions/improvements
 
 * All delivery windows are assumed to be in UTC date format.

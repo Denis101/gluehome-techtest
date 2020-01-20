@@ -3,7 +3,7 @@ GRANT ALL PRIVILEGES ON logistics.* TO 'api'@'%' IDENTIFIED BY 'api';
 GRANT ALL PRIVILEGES ON logistics.* TO 'api'@'localhost' IDENTIFIED BY 'api';
 
 CREATE TABLE IF NOT EXISTS `logistics`.`tb_member` (
-  `member_id` int(10) unsigned NOT NULL,
+  `member_id` int(10) unsigned AUTO_INCREMENT NOT NULL,
   `forename` varchar(255) NOT NULL,
   `surname` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `logistics`.`tb_auth` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS `logistics`.`tb_order` (
-  `order_id` int(10) unsigned NOT NULL,
+  `order_id` int(10) unsigned AUTO_INCREMENT NOT NULL,
   `recipient_id` int(10) unsigned NOT NULL,
   `sender` varchar(255) NOT NULL,
   `delivery_state` varchar(10) NOT NULL,

@@ -37,7 +37,7 @@ namespace GlueHome.Api.Middleware
                 return;
             }
 
-            var authHeaderBytes = System.Convert.FromBase64String(header);
+            var authHeaderBytes = System.Convert.FromBase64String(header.ToString().Split(' ')[1]);
             var authHeader = System.Text.Encoding.UTF8.GetString(authHeaderBytes).Split(':');
             var username = authHeader[0];
             var password = authHeader[1];
@@ -46,7 +46,7 @@ namespace GlueHome.Api.Middleware
                 context.Response.StatusCode = 403;
                 return;
             }
-            
+
             await next.Invoke(context);
         }
     }
