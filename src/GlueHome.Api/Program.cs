@@ -1,5 +1,7 @@
+using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace GlueHome.Api
 {
@@ -7,7 +9,10 @@ namespace GlueHome.Api
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            CreateHostBuilder(args)
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .Build()
+                .Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -15,6 +20,9 @@ namespace GlueHome.Api
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                })
+                .ConfigureLogging((hostingContext, logging) => {
+                    logging.ClearProviders();
                 });
     }
 }

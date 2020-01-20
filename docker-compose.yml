@@ -5,7 +5,9 @@ services:
     ports:
       - 8080:80
     volumes:
-      - ./etc/nginx:/etc/nginx
+      - ./etc/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./etc/nginx/sites-enabled:/etc/nginx/sites-enabled
+      - ./etc/nginx/conf.d:/etc/nginx/conf.d
     links:
       - api
     networks:

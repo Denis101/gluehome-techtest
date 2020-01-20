@@ -88,6 +88,11 @@ namespace GlueHome.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseRequestLogger(loggerFactory.CreateLogger("Request"));
+            app.AddUserAuthentication(
+                loggerFactory.CreateLogger("Authentication"), 
+                app.ApplicationServices.GetService<IAuthenticator>());
+
             app.UseRouting();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
