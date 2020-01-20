@@ -1,9 +1,8 @@
 CREATE DATABASE IF NOT EXISTS logistics;
 GRANT ALL PRIVILEGES ON logistics.* TO 'api'@'%' IDENTIFIED BY 'api';
 GRANT ALL PRIVILEGES ON logistics.* TO 'api'@'localhost' IDENTIFIED BY 'api';
-USE logistics;
 
-CREATE TABLE IF NOT EXISTS `tb_member` (
+CREATE TABLE IF NOT EXISTS `logistics`.`tb_member` (
   `member_id` int(10) unsigned NOT NULL,
   `forename` varchar(255) NOT NULL,
   `surname` varchar(255) NOT NULL,
@@ -20,15 +19,15 @@ CREATE TABLE IF NOT EXISTS `tb_member` (
   PRIMARY KEY (`member_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE IF NOT EXISTS `tb_auth` (
+CREATE TABLE IF NOT EXISTS `logistics`.`tb_auth` (
   `member_id` int(10) unsigned NOT NULL,
   `password` varchar(255) NOT NULL,
   `last_login` int(10) unsigned DEFAULT NULL COMMENT 'unixtime',
-  PRIMARY KEY (`member_id`),
-  CONSTRAINT `tb_auth_ibfk_1` FOREIGN KEY (`member_id`) REFERENCES `tb_member` (`member_id`) ON DELETE CASCASE
+  PRIMARY KEY (`member_id`)
+  -- CONSTRAINT `tb_auth_ibfk_1` FOREIGN KEY (`member_id`) REFERENCES `tb_member` (`member_id`) ON DELETE CASCASE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE IF NOT EXISTS `tb_order` (
+CREATE TABLE IF NOT EXISTS `logistics`.`tb_order` (
   `order_id` int(10) unsigned NOT NULL,
   `recipient_id` int(10) unsigned NOT NULL,
   `sender` varchar(255) NOT NULL,
@@ -38,6 +37,6 @@ CREATE TABLE IF NOT EXISTS `tb_order` (
   `create_date` int(10) unsigned DEFAULT NULL COMMENT 'unixtime',
   `modified_date` int(10) unsigned DEFAULT NULL COMMENT 'unixtime',
   `delete_date` int(10) unsigned DEFAULT NULL COMMENT 'unixtime',
-  PRIMARY KEY (`order_id`),
-  CONSTRAINT `tb_order_ibfk_1` FOREIGN KEY (`recipient_id`) REFERENCES `tb_member` (`member_id`) ON DELETE CASCASE
+  PRIMARY KEY (`order_id`)
+  -- CONSTRAINT `tb_order_ibfk_1` FOREIGN KEY (`recipient_id`) REFERENCES `tb_member` (`member_id`) ON DELETE CASCASE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

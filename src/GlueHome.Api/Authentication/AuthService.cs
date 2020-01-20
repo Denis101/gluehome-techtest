@@ -1,4 +1,3 @@
-using System;
 using GlueHome.Api.Models.Table;
 using GlueHome.Api.Repositories;
 using Microsoft.Extensions.Logging;
@@ -7,8 +6,6 @@ namespace GlueHome.Api.Authentication
 {
     public class AuthService : IAuthenticator
     {
-        private static readonly string INVALID_AUTH_MSG = "Invalid username or password provided";
-
         private readonly ILogger<AuthService> logger;
         private readonly MemberRepository memberRepository;
         private readonly AuthRepository authRepository;

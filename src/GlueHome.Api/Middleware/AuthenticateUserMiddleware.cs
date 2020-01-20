@@ -8,12 +8,12 @@ namespace GlueHome.Api.Middleware
 {
     public class AuthenticateUserMiddleware
     {
-        private readonly ILogger<AuthenticateUserMiddleware> logger;
+        readonly RequestDelegate next;
+        private readonly ILogger logger;
         private readonly IAuthenticator authenticator;
-        private readonly RequestDelegate next;
 
         public AuthenticateUserMiddleware(
-            ILogger<AuthenticateUserMiddleware> logger, 
+            ILogger logger, 
             IAuthenticator authenticator, 
             RequestDelegate next)
         {
@@ -24,12 +24,30 @@ namespace GlueHome.Api.Middleware
 
         public async Task Invoke(HttpContext context)
         {
-            var authHeaderBytes = System.Convert.FromBase64String(context.Request.Headers["Authorization"]);
+            if (context.Request.Path.StartsWithSegments(new PathString("/swagger")))
+            {
+                await next.Invoke(context);
+                return;
+            }
+
+            var header = context.Request.Headers["Authorization"];
+            if (string.IsNullOrWhiteSpace(header)) 
+            {
+                context.Response.StatusCode = 403;
+                return;
+            }
+
+            var authHeaderBytes = System.Convert.FromBase64String(header);
             var authHeader = System.Text.Encoding.UTF8.GetString(authHeaderBytes).Split(':');
             var username = authHeader[0];
             var password = authHeader[1];
 
-            await next.Invoke(context);   
+            if (!authenticator.IsAuthenticated(username, password)) {
+                context.Response.StatusCode = 403;
+                return;
+            }
+            
+            await next.Invoke(context);
         }
     }
 }
