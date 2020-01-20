@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GlueHome.Api\GlueHome.Api.csproj" />
+    <ProjectReference Include="..\..\src\GlueHome.Api\GlueHome.Api.csproj" />
   </ItemGroup>
 
 </Project>

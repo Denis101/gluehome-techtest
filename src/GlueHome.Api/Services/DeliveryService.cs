@@ -60,7 +60,7 @@ namespace GlueHome.Api.Services
 
         public Delivery Delete(Delivery delivery)
         {
-            orderRepository.Delete(delivery.Order.OrderNumber);
+            orderRepository.Delete(int.Parse(delivery.Order.OrderNumber));
             return delivery;
         }
 
