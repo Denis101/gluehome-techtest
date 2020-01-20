@@ -1,6 +1,8 @@
 version: '2.1'
 services:
   nginx:
+    depends_on: 
+      - api
     image: nginx
     ports:
       - 8080:80
@@ -8,20 +10,15 @@ services:
       - ./etc/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./etc/nginx/sites-enabled:/etc/nginx/sites-enabled
       - ./etc/nginx/conf.d:/etc/nginx/conf.d
-    links:
-      - api
     networks:
       - internal
       - external
   api:
-    build: ./src/GlueHome.Api
-    ports:
-      - 5000:5000
-      - 5001:5001
-    environment:
-      MYSQL_CONNECTION_STRING: Server=mysql;User ID=api;Password=api;Database=logistics
-    links:
+    depends_on:
       - mysql
+    build: ./src/GlueHome.Api
+    environment:
+      MYSQL_CONNECTION_STRING: host=mysql;port=3306;user id=api;password=api;database=logistics;
     networks:
       - internal
   mysql:
@@ -37,52 +34,6 @@ services:
     command: [mysqld, --bind-address=0.0.0.0]
     networks:
       - internal
-  elasticsearch:
-    image: elasticsearch:5.6.3
-    ports:
-      - 9200:9200
-    environment:
-      - cluster.name=gluehome-cluster
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms256m -Xmx1g"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - ./volumes/elasticsearch/data:/usr/share/elasticsearch/data
-      - ./volumes/elasticsearch/lib:/var/lib/elasticsearch
-    networks:
-      - internal
-  grafana:
-    image: grafana/grafana
-    ports:
-      - 3000:3000
-    volumes:
-      - ./etc/grafana:/etc/grafana
-      - ./volumes/data/grafana:/var/lib/grafana
-    environment:
-      GF_SECURITY_ADMIN_USER: grafana
-      GF_SECURITY_ADMIN_PASSWORD: grafana
-      GF_USERS_ALLOW_SIGN_UP: "false"
-    links:
-      - prometheus
-    networks:
-      - internal
-      - external
-  prometheus:
-    image: prom/prometheus
-    ports:
-      - 9090:9090
-    volumes:
-      - ./etc/prometheus:/etc/prometheus
-      - ./volumes/prometheus:/prometheus
-    networks:
-      - internal
-    links:
-      - api
-    command:
-      - --config.file=/etc/prometheus/prometheus.yml
 networks:
   external:
     driver: bridge
