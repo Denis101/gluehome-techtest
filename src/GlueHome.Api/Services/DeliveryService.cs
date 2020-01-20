@@ -4,6 +4,8 @@ using GlueHome.Api.Models.Table;
 using GlueHome.Api.Repositories;
 using GlueHome.Api.Extensions;
 using Microsoft.Extensions.Logging;
+using System;
+using GlueHome.Api.Processors;
 
 namespace GlueHome.Api.Services
 {
@@ -12,15 +14,18 @@ namespace GlueHome.Api.Services
         private readonly ILogger<DeliveryService> logger;
         private readonly MemberRepository memberRepository;
         private readonly OrderRepository orderRepository;
+        private readonly IDeliveryStateProcessor deliveryStateProcessor;
 
         public DeliveryService(
             ILogger<DeliveryService> logger,
             IRepository<Member> memberRepository,
-            IRepository<Order> orderRepository)
+            IRepository<Order> orderRepository,
+            IDeliveryStateProcessor deliveryStateProcessor)
         {
             this.logger = logger;
             this.memberRepository = (MemberRepository)memberRepository;
             this.orderRepository = (OrderRepository)orderRepository;
+            this.deliveryStateProcessor = deliveryStateProcessor;
         }
 
         public Delivery Get(long id)
@@ -53,9 +58,20 @@ namespace GlueHome.Api.Services
 
         public Delivery Update(Delivery delivery)
         {
+            var currentOrder = orderRepository.FindOne(int.Parse(delivery.Order.OrderNumber));
             var member = memberRepository.FindByEmail(delivery.Recipient.Email);
-            var order = orderRepository.Update(OrderFromDelivery(delivery, member.MemberId));
-            return new Delivery().MapFromOrder(order).MapFromMember(member);
+
+            delivery.State = deliveryStateProcessor.Update(new DeliveryStateUpdateQuery()
+            {
+                Desired = delivery.State,
+                Current = (DeliveryState)Enum.Parse(typeof(DeliveryState), currentOrder.DeliveryState),
+                Window = delivery.AccessWindow,
+                IsPartner = member.IsPartner,
+            });
+
+            return new Delivery()
+                .MapFromOrder(orderRepository.Update(OrderFromDelivery(delivery, member.MemberId)))
+                .MapFromMember(member);
         }
 
         public Delivery Delete(Delivery delivery)

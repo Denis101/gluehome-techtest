@@ -13,34 +13,33 @@ namespace GlueHome.Api.Processors
             this.logger = logger;
         }
 
-        public DeliveryState Approve(Delivery delivery)
+        public DeliveryState Update(DeliveryStateUpdateQuery query)
         {
-            if (DateTime.Now < delivery.AccessWindow.StartTime) {
-                return DeliveryState.Approved;
+            if (ShouldExpire(query.Current, query.Window)) 
+            {
+                return DeliveryState.Expired;
             }
 
-            return DeliveryState.Created;
+            switch (query.Desired) {
+                case DeliveryState.Approved:
+                    if (DateTime.UtcNow < query.Window.StartTime && !query.IsPartner) {
+                        return DeliveryState.Approved;
+                    }
+                    
+                    return query.Current;
+                case DeliveryState.Cancelled:
+                    return DeliveryState.Cancelled;
+                case DeliveryState.Completed:
+                    return query.IsPartner ? DeliveryState.Completed : query.Current;
+                default:
+                    return DeliveryState.Created;
+            }
         }
 
-        public DeliveryState Cancel(Delivery delivery)
+        public bool ShouldExpire(DeliveryState current, DateTimeWindow window)
         {
-            return DeliveryState.Cancelled;
-        }
-
-        public DeliveryState Complete(Delivery delivery)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public DeliveryState Create(Delivery delivery)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public bool ShouldExpire(Delivery delivery)
-        {
-            return delivery.State != DeliveryState.Completed &&
-                DateTime.Now > delivery.AccessWindow.EndTime;
+            return current != DeliveryState.Completed &&
+                DateTime.Now > window.EndTime;
         }
     }
 }

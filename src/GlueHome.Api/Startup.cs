@@ -3,6 +3,7 @@ using System.Linq;
 using GlueHome.Api.Authentication;
 using GlueHome.Api.Models.Table;
 using GlueHome.Api.Mysql;
+using GlueHome.Api.Processors;
 using GlueHome.Api.Repositories;
 using GlueHome.Api.Services;
 using Microsoft.AspNetCore.Builder;
@@ -76,6 +77,7 @@ namespace GlueHome.Api
             services.AddTransient<IAuthenticator, AuthService>();
             services.AddTransient<IDeliveryReader, DeliveryService>();
             services.AddTransient<IDeliveryWriter, DeliveryService>();
+            services.AddTransient<IDeliveryStateProcessor, DeliveryStateProcessor>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
