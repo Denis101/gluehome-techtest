@@ -1,6 +1,6 @@
 # GlueHome Tech Test - Denis Craig (January 2020)
 
-**NOTE** This app was developed on a macOS, it is not tested nor guaranteed to work as-is on a Windows machine. It should, however, work in a Linux environment so having docker & docker-compose installed on a VM should be able to run the app just fine.
+**NOTE** This app was developed on a macOS, it is not tested nor guaranteed to work as-is on a Windows machine. It should, however, work in a Linux environment so having docker & docker-compose installed on a VM will work.
 
 ## Installation
 
