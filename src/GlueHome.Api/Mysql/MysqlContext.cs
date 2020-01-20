@@ -38,6 +38,33 @@ namespace GlueHome.Api.Mysql
             }
         }
 
+        public IEnumerable<T> ExecuteQueryBatch<T>(string query, IDataMapper<T> mapper)
+        {
+            return ExecuteCommandBatch(new MySqlCommand(query, connection), mapper);
+        }
+
+        public IEnumerable<T> ExecuteQueryBatch<T>(string query, Dictionary<string, dynamic> parameters, IDataMapper<T> mapper)
+        {
+            var cmd = new MySqlCommand(query, connection);
+            foreach (KeyValuePair<string, dynamic> kv in parameters) {
+                cmd.Parameters.AddWithValue(kv.Key, kv.Value);
+            }
+
+            return ExecuteCommandBatch(cmd, mapper);
+        }
+
+        private IEnumerable<T> ExecuteCommandBatch<T>(MySqlCommand command, IDataMapper<T> mapper)
+        {
+            using (var reader = command.ExecuteReader())
+            {
+                do
+                {
+                    yield return mapper.map(reader);
+                } 
+                while (reader.NextResult());
+            }
+        }
+
         public void Dispose()
         {
             connection.Close();

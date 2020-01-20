@@ -6,5 +6,7 @@ namespace GlueHome.Api.Mysql
     {
         T ExecuteQuery<T>(string query, IDataMapper<T> mapper);
         T ExecuteQuery<T>(string query, Dictionary<string, dynamic> parameters, IDataMapper<T> mapper);
+        IEnumerable<T> ExecuteQueryBatch<T>(string query, IDataMapper<T> mapper);
+        IEnumerable<T> ExecuteQueryBatch<T>(string query, Dictionary<string, dynamic> parameters, IDataMapper<T> mapper);
     }
 }

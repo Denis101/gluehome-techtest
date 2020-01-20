@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using GlueHome.Api.Extensions;
 using GlueHome.Api.Models.Table;
@@ -20,12 +21,29 @@ namespace GlueHome.Api.Repositories
             this.mysqlContext = mysqlContext;
         }
 
+        public IEnumerable<Order> List()
+        {
+            return mysqlContext.ExecuteQueryBatch("SELECT * FROM logistics.tb_order", Mapper);
+        }
+
         public Order FindOne(long id)
         {
-            return mysqlContext.ExecuteQuery(
-                "SELECT * FROM logistics.tb_order WHERE order_id = @id",
-                new Dictionary<string, dynamic>() { { "@id", id } },
-                Mapper);
+            return FindOne(id, false);   
+        }
+
+        private Order FindOne(long id, bool includeDeleted)
+        {
+            var query = "";
+            if (includeDeleted)
+            {
+                query = "SELECT * FROM logistics.tb_order WHERE order_id = @id";
+            }
+            else
+            {
+                query = "SELECT * FROM logistics.tb_order WHERE order_id = @id AND delete_date = NULL";
+            }
+
+            return mysqlContext.ExecuteQuery(query, new Dictionary<string, dynamic>() { { "@id", id } }, Mapper);
         }
 
         public Order Update(Order order)
@@ -36,9 +54,12 @@ namespace GlueHome.Api.Repositories
                 sender = @sender,
                 delivery_state = @delivery_state,
                 delivery_start_date = @delivery_start_date,
-                delivery_end_date = @delivery_end_date
+                delivery_end_date = @delivery_end_date,
+                modified_date = @modified_date
             WHERE
-                order_id = @id";
+                order_id = @id
+            AND
+                delete_date = NULL";
 
             var parameters = new Dictionary<string, dynamic>()
             {
@@ -47,11 +68,30 @@ namespace GlueHome.Api.Repositories
                 { "@sender", order.Sender },
                 { "@delivery_state", order.DeliveryState },
                 { "@delivery_start_date", order.DeliveryStartDate.ToUnixTimestamp() },
-                { "@delivery_end_date", order.DeliveryEndDate.ToUnixTimestamp() }
+                { "@delivery_end_date", order.DeliveryEndDate.ToUnixTimestamp() },
+                { "@modified_date", DateTime.UtcNow }
             };
 
             mysqlContext.ExecuteQuery(query, parameters, Mapper);
             return FindOne(order.OrderId);
+        }
+
+        public Order Delete(long id)
+        {
+            var query =
+            @"UPDATE logistics.tb_order SET
+                delete_date = @delete_date
+            WHERE
+                order_id = @id";
+
+            var parameters = new Dictionary<string, dynamic>()
+            {
+                { "@id", id },
+                { "@delete_date", DateTime.UtcNow },
+            };
+
+            mysqlContext.ExecuteQuery(query, parameters, Mapper);
+            return FindOne(id, true);
         }
 
         public Order Insert(Order order)
@@ -62,13 +102,15 @@ namespace GlueHome.Api.Repositories
                 sender,
                 delivery_state,
                 delivery_start_date,
-                delivery_end_date
+                delivery_end_date,
+                create_date
             ) VALUES (
                 @recipient_id,
                 @sender,
                 @delivery_state,
                 @delivery_start_date,
-                @delivery_end_date
+                @delivery_end_date,
+                @create_date
             )";
 
             var parameters = new Dictionary<string, dynamic>()
@@ -77,7 +119,8 @@ namespace GlueHome.Api.Repositories
                 { "@sender", order.Sender },
                 { "@delivery_state", order.DeliveryState },
                 { "@delivery_start_date", order.DeliveryStartDate.ToUnixTimestamp() },
-                { "@delivery_end_date", order.DeliveryEndDate.ToUnixTimestamp() }
+                { "@delivery_end_date", order.DeliveryEndDate.ToUnixTimestamp() },
+                { "@create_date", DateTime.UtcNow }
             };
 
             mysqlContext.ExecuteQuery(query, parameters, Mapper);

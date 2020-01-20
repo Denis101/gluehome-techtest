@@ -24,6 +24,11 @@ namespace GlueHome.Api.Middleware
 
         public async Task Invoke(HttpContext context)
         {
+            var authHeaderBytes = System.Convert.FromBase64String(context.Request.Headers["Authorization"]);
+            var authHeader = System.Text.Encoding.UTF8.GetString(authHeaderBytes).Split(':');
+            var username = authHeader[0];
+            var password = authHeader[1];
+
             await next.Invoke(context);   
         }
     }

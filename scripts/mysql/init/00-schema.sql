@@ -35,6 +35,9 @@ CREATE TABLE IF NOT EXISTS `tb_order` (
   `delivery_state` varchar(10) NOT NULL,
   `delivery_start_date` int(10) unsigned DEFAULT NULL COMMENT 'unixtime',
   `delivery_end_date` int(10) unsigned DEFAULT NULL COMMENT 'unixtime',
+  `create_date` int(10) unsigned DEFAULT NULL COMMENT 'unixtime',
+  `modified_date` int(10) unsigned DEFAULT NULL COMMENT 'unixtime',
+  `delete_date` int(10) unsigned DEFAULT NULL COMMENT 'unixtime',
   PRIMARY KEY (`order_id`),
   CONSTRAINT `tb_order_ibfk_1` FOREIGN KEY (`recipient_id`) REFERENCES `tb_member` (`member_id`) ON DELETE CASCASE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

@@ -94,7 +94,6 @@ namespace GlueHome.Api
                 app.ApplicationServices.GetService<IAuthenticator>());
 
             app.UseRouting();
-            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

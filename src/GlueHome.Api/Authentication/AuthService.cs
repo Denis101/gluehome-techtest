@@ -27,12 +27,12 @@ namespace GlueHome.Api.Authentication
         {
             var member = memberRepository.FindByEmail(username);
             if (member == null) {
-                throw new ArgumentException(INVALID_AUTH_MSG);
+                return false;
             }
 
             var auth = authRepository.FindOne(member.MemberId);
             if (auth == null) {
-                throw new ArgumentException(INVALID_AUTH_MSG);
+                return false;
             }
 
             // yikes
